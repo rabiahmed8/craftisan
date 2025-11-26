@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { UserNav } from "@/components/auth/user-nav";
 import Link from "next/link";
 
 export default function Home() {
@@ -8,12 +9,7 @@ export default function Home() {
       <header className="border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="font-bold text-2xl text-primary">Craftisan</div>
-          <nav className="flex gap-4">
-            <Link href="/login" className="text-sm font-medium hover:underline">
-              Login
-            </Link>
-            <Button size="sm">Start Selling</Button>
-          </nav>
+          <UserNav />
         </div>
       </header>
 
