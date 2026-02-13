@@ -1,10 +1,10 @@
 # Project Status: Craftisan
 
-> **Last Updated:** November 26, 2025
-> **Current Phase:** Authentication & Infrastructure Setup
+> **Last Updated:** February 14, 2026
+> **Current Phase:** Feature Refinement & Seller Tools
 
 ## 1. Project Overview
-**Craftisan** is a marketplace for Pakistani handicrafts (Etsy-like platform). It connects local artisans with buyers, featuring unique handmade items like resin art, crochet, paintings, and pottery.
+**Craftisan** is a marketplace for Pakistani handicrafts. It connects local artisans with buyers, featuring unique handmade items like resin art, crochet, paintings, and pottery.
 
 ## 2. Tech Stack
 - **Framework:** Next.js 15 (App Router)
@@ -13,59 +13,57 @@
 - **Database:** PostgreSQL (via Supabase)
 - **ORM:** Prisma
 - **Authentication:** Supabase Auth (SSR)
-- **Deployment:** Vercel (planned)
+- **Storage:** Supabase Storage (Bucket: `products`)
 
 ## 3. Architecture Decisions
 - **Database Access:** 
-  - **Prisma** is used for all data queries (Products, Orders, Users).
-  - **Supabase Client** is used **ONLY** for Authentication and Storage (Images).
-- **Auth Flow:** 
-  - Supabase Auth handles login/signup/sessions.
-  - User data is synced to Prisma `User` table (TODO).
-  - Middleware (`proxy.ts`) protects routes and refreshes sessions.
-- **Image Storage:** Supabase Storage (Buckets).
+  - **Prisma** handles all relational data (Users, Products, Orders).
+  - **Supabase Client** handles Authentication and Storage.
+- **User Synchronization:**
+  - Automatically syncs Supabase Auth users to Prisma `User` table via Postgres Trigger on signup.
+  - Server Actions use `upsert` for robustness during seller onboarding.
+- **Cart System:**
+  - Client-side state using React Context.
+  - Persisted to `localStorage`.
+- **Image Strategy:**
+  - Currently supports external URLs.
+  - **Moving to:** Supabase Storage (Multipart uploads).
 
 ## 4. Current Status
 ### ✅ Completed Features
-- **Project Setup:** Next.js + TypeScript + Tailwind initialized.
-- **Database:** Prisma schema defined (User, Product, Order) and connected to Supabase.
-- **UI Components:** Basic shadcn/ui setup, Landing page with Hero/Categories.
-- **Authentication Infrastructure:**
-  - Supabase SSR client setup (`lib/supabase`).
-  - Login & Signup pages with Email/Password & Google OAuth.
-  - Auth middleware (`proxy.ts`).
-  - Dynamic Navbar (`UserNav`) showing login state.
+- **Authentication & Sync:**
+  - Full Signup/Login flow.
+  - Automatic DB synchronization (Supabase Trigger + Prisma).
+- **Browsing & Discovery:**
+  - **Shop Page:** Paginated (planned) product grid with category sidebar filtering.
+  - **Category Navigation:** Direct links from Home to filtered Shop views.
+  - **Seller Profiles:** Public pages (`/seller/[id]`) showing artisan-specific collections.
+- **Seller Tools:**
+  - **Become a Seller:** Onboarding flow to register shop names.
+  - **Product Listing:** Form for sellers to post new items (Title, Description, Price, Category).
+- **Shopping Experience:**
+  - **Reusable Header:** Consistent navigation with UserNav and Cart trigger.
+  - **Cart System:** Persistent cart with "Add to Cart" buttons on all product cards and a slide-over drawer UI.
 
-### 🚧 In Progress
-- **Environment Configuration:** Waiting for Supabase keys in `.env`.
-- **User Profile Sync:** Connecting Supabase Auth users to Prisma database.
+### 🚧 In Progress (Roadmap)
+- **Image Upload Integration:** Replacing URL inputs with Supabase Storage bucket uploads for product images.
+- **Checkout Flow:** Building the checkout page and order creation logic.
+- **UI Refinements:**
+  - Fixing Cart sidebar layout/UX.
+  - Updating Product Grid styling for better responsiveness.
 
 ### ❌ Missing / To Do
-- **Product Management:** Create/Edit/Delete products (Seller Dashboard).
-- **Browsing:** Product listing and details pages.
-- **Shopping Cart:** Cart state and checkout flow.
-- **Payments:** Integration (Stripe/Local payment gateways).
-- **Image Upload:** Logic to upload product images to Supabase Storage.
+- **Orders Dashboard:** Buyer and Seller views for order history.
+- **Payments:** Integration with local payment gateways (JazzCash/EasyPaisa) or Stripe.
+- **Search:** Global search bar for products and shops.
 
-## 5. Environment Setup
-Required `.env` variables:
-```env
-# Connect to Supabase Transaction Pooler
-DATABASE_URL="postgres://postgres.[project]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
+## 5. Recent Changes Log (Feb 2026)
+- **Implemented Shopping Cart:** React Context + Sidebar Drawer + LocalStorage persistence.
+- **Added Seller Profiles:** Dynamic routes for public artisan pages.
+- **Product Listing:** Created `/list-product` page and server action.
+- **Auth Sync:** Implemented Postgres Trigger for real-time user syncing.
+- **Category Filtering:** Fixed `searchParams` Promise handling for Next.js 15.
 
-# Connect to Supabase Session Pooler (for migrations)
-DIRECT_URL="postgres://postgres.[project]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres"
-
-# Supabase Auth & Storage
-NEXT_PUBLIC_SUPABASE_URL="https://[project].supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="[public-anon-key]"
-```
-
-## 6. Recent Changes Log
-- **[2025-11-26] Auth Setup:** Implemented full Supabase Auth flow. Created Login/Signup pages, `proxy.ts` middleware, and `UserNav` component.
-- **[2025-11-26] UI Fixes:** Fixed Navbar alignment issues.
-- **[2025-11-25] Prisma Fix:** Resolved module resolution issues with custom generated client path.
-
-## 7. How to Use This File
-- **For Humans:** Read this to get up to speed on what's done and what's next.
-- **For AI Agents:** Read this file first to understand the context, architectural constraints, and current task status before making changes.
+## 6. How to Use This File
+- **For Humans:** Current source of truth for project progress.
+- **For AI Agents:** Use this to understand current architectural patterns and "next steps". Always update this file after completing significant milestones.
