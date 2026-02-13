@@ -1,17 +1,25 @@
 import { Button } from "@/components/ui/button";
-import { UserNav } from "@/components/auth/user-nav";
 import Link from "next/link";
+import { Header } from "@/components/layout/header";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let isSeller = false;
+  if (user?.email) {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: user.email },
+      select: { isSeller: true }
+    });
+    isSeller = dbUser?.isSeller || false;
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Navbar Placeholder */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="font-bold text-2xl text-primary">Craftisan</div>
-          <UserNav />
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <main className="flex-1">
@@ -23,12 +31,18 @@ export default function Home() {
             The premier marketplace for handmade treasures. From intricate resin art to traditional crochet, find unique pieces made with love in Pakistan.
           </p>
           <div className="flex justify-center gap-4">
-            <Button size="lg" className="px-8">
-              Shop Now
+            <Button size="lg" className="px-8" asChild>
+              <Link href="/shop">Shop Now</Link>
             </Button>
-            <Button size="lg" variant="outline" className="px-8">
-              Become a Seller
-            </Button>
+            {isSeller ? (
+              <Button size="lg" variant="outline" className="px-8" asChild>
+                <Link href="/list-product">List a Product</Link>
+              </Button>
+            ) : (
+              <Button size="lg" variant="outline" className="px-8" asChild>
+                <Link href="/become-seller">Become a Seller</Link>
+              </Button>
+            )}
           </div>
         </section>
 
@@ -38,9 +52,9 @@ export default function Home() {
             <h2 className="text-3xl font-bold mb-8 text-center">Popular Categories</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {["Resin Art", "Crochet", "Paintings", "Pottery"].map((cat) => (
-                <div key={cat} className="bg-card p-6 rounded-lg shadow-sm border text-center hover:shadow-md transition-shadow cursor-pointer">
+                <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className="bg-card p-6 rounded-lg shadow-sm border text-center hover:shadow-md transition-shadow cursor-pointer block">
                   <h3 className="font-semibold">{cat}</h3>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
