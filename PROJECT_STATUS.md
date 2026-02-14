@@ -45,12 +45,13 @@
   - **Reusable Header:** Consistent navigation with UserNav and Cart trigger.
   - **Cart System:** Persistent cart with "Add to Cart" buttons on all product cards and a slide-over drawer UI.
 
-### 🚧 In Progress (Roadmap)
-- **Image Upload Integration:** Replacing URL inputs with Supabase Storage bucket uploads for product images.
-- **Checkout Flow:** Building the checkout page and order creation logic.
+### ✅ Completed Features
+...
+- **Checkout Flow:** Full multi-step process from cart to success screen.
 - **UI Refinements:**
-  - Fixing Cart sidebar layout/UX.
-  - Updating Product Grid styling for better responsiveness.
+  - Standardized Cart sidebar with premium layout.
+  - Stabilized order tracking on success page.
+  - Build-ready for Vercel (removed unused components).
 
 ### ❌ Missing / To Do
 - **Orders Dashboard:** Buyer and Seller views for order history.
