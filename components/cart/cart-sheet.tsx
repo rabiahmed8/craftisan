@@ -36,10 +36,10 @@ export function CartSheet({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
 
             {/* Sheet */}
             <div
-                className={`fixed top-0 right-0 h-full w-full max-w-md bg-background shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
+                className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out border-l ${isOpen ? "translate-x-0" : "translate-x-full"
                     }`}
             >
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full bg-white">
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b">
                         <h2 className="text-xl font-bold flex items-center gap-2">
@@ -67,7 +67,7 @@ export function CartSheet({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                             </div>
                         ) : (
                             cart.map((item) => (
-                                <div key={item.id} className="flex gap-4 group">
+                                <div key={item.id} className="flex gap-4 p-4 rounded-xl border bg-card/50 hover:bg-card transition-colors group relative">
                                     <div className="relative h-20 w-20 rounded-lg bg-muted overflow-hidden flex-shrink-0 border">
                                         {item.image ? (
                                             <Image src={item.image} alt={item.title} fill className="object-cover" />
@@ -78,29 +78,29 @@ export function CartSheet({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                                     <div className="flex-1 flex flex-col justify-between py-0.5">
                                         <div>
                                             <div className="flex justify-between items-start">
-                                                <h4 className="font-semibold text-sm line-clamp-1">{item.title}</h4>
-                                                <span className="font-bold text-sm">Rs. {(item.price * item.quantity).toLocaleString()}</span>
+                                                <h4 className="font-semibold text-sm line-clamp-2 pr-4">{item.title}</h4>
+                                                <span className="font-bold text-sm whitespace-nowrap">Rs. {item.price.toLocaleString()}</span>
                                             </div>
-                                            <p className="text-xs text-muted-foreground">{item.sellerName}</p>
+                                            <p className="text-xs text-muted-foreground mt-1">by {item.sellerName}</p>
                                         </div>
-                                        <div className="flex items-center justify-between mt-auto">
-                                            <div className="flex items-center border rounded-md">
+                                        <div className="flex items-center justify-between mt-4">
+                                            <div className="flex items-center bg-muted rounded-full p-1">
                                                 <button
-                                                    className="p-1 hover:bg-muted text-muted-foreground"
+                                                    className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-background text-muted-foreground transition-colors"
                                                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                                 >
                                                     <Minus className="h-3 w-3" />
                                                 </button>
-                                                <span className="w-8 text-center text-xs font-medium">{item.quantity}</span>
+                                                <span className="w-8 text-center text-xs font-semibold">{item.quantity}</span>
                                                 <button
-                                                    className="p-1 hover:bg-muted text-muted-foreground"
+                                                    className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-background text-muted-foreground transition-colors"
                                                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                                 >
                                                     <Plus className="h-3 w-3" />
                                                 </button>
                                             </div>
                                             <button
-                                                className="text-muted-foreground hover:text-destructive transition-colors"
+                                                className="text-muted-foreground hover:text-destructive transition-colors p-1"
                                                 onClick={() => removeFromCart(item.id)}
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -115,13 +115,24 @@ export function CartSheet({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                     {/* Footer */}
                     {cart.length > 0 && (
                         <div className="p-6 border-t bg-muted/20 space-y-4">
-                            <div className="flex justify-between text-lg font-bold">
-                                <span>Total</span>
-                                <span>Rs. {totalPrice.toLocaleString()}</span>
+                            <div className="space-y-1.5 pb-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Subtotal</span>
+                                    <span>Rs. {totalPrice.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Shipping</span>
+                                    <span className="text-success text-green-600 font-medium">Calculated at checkout</span>
+                                </div>
+                                <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                                    <span>Total</span>
+                                    <span>Rs. {totalPrice.toLocaleString()}</span>
+                                </div>
                             </div>
-                            <p className="text-xs text-muted-foreground">Taxes and shipping calculated at checkout.</p>
-                            <Button className="w-full py-6 text-lg font-bold shadow-lg shadow-primary/20">
-                                Checkout Now
+                            <Button asChild className="w-full py-6 text-lg font-bold shadow-lg shadow-primary/20" onClick={onClose}>
+                                <Link href="/checkout">
+                                    Checkout Now
+                                </Link>
                             </Button>
                         </div>
                     )}
